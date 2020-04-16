@@ -50,15 +50,27 @@ static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] 
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 
-#include "fibonacci.c"
-#include "grid.c"
+/* #include "fibonacci.c" */
+/* #include "grid.c" */
+#define FORCE_VSPLIT 1  /* nrowgrid layout: force two clients to always split vertically */
+#include "vanitygaps.c"
+
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
-	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
- 	{ "[@]",      spiral },
-	{ "HHH",      grid },
+	{ "[]=",    tile },    /* first entry is default */
+	{ "TTT",	bstack },		/* Master on top, slaves on bottom */
+
+	{ "[@]",	spiral },		/* Fibonacci spiral */
+	{ "[\\]",	dwindle },		/* Decreasing in size right and leftward */
+
+	{ "H[]",	deck },			/* Master on left, slaves in monocle-like mode on right */
+ 	{ "[M]",	monocle },		/* All windows on top of eachother */
+
+	{ "|M|",	centeredmaster },		/* Master in middle, slaves on sides */
+	{ ">M>",	centeredfloatingmaster },	/* Same but master floats */
+
+	{ "><>",	NULL },			/* no layout function means floating behavior */
+	{ NULL,		NULL },
 };
 
 /* key definitions */
@@ -91,18 +103,14 @@ static Key keys[] = {
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY,                       XK_Down,   focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_Up,     focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+	/* { MODKEY|SFTKEY,                XK_Down,   incnmaster,     {.i = +1 } }, */
+	/* { MODKEY|SFTKEY,                XK_Up,     incnmaster,     {.i = -1 } }, */
 	{ MODKEY|CTLKEY,                XK_Left,   shiftview,      {.i = -1 } },
 	{ MODKEY|CTLKEY,                XK_Right,  shiftview,      {.i = +1 } },
 	{ MODKEY|ALTKEY,                XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY|ALTKEY,                XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY|ALTKEY,                XK_Left,   setmfact,       {.f = -0.05} },
 	{ MODKEY|ALTKEY,                XK_Right,  setmfact,       {.f = +0.05} },
-	{ MODKEY|ALTKEY,                XK_j,      setcfact,       {.f = +0.20} },
-	{ MODKEY|ALTKEY,                XK_k,      setcfact,       {.f = -0.20} },
-	{ MODKEY|ALTKEY,                XK_Down,   setcfact,       {.f = +0.20} },
-	{ MODKEY|ALTKEY,                XK_Up,     setcfact,       {.f = -0.20} },
 	/* { MODKEY|Mod4Mask,              XK_h,      incrgaps,       {.i = +1 } }, */
 	/* { MODKEY|Mod4Mask,              XK_l,      incrgaps,       {.i = -1 } }, */
 	/* { MODKEY|Mod4Mask|ShiftMask,    XK_h,      incrogaps,      {.i = +1 } }, */
@@ -123,11 +131,16 @@ static Key keys[] = {
 	/* { MODKEY,                       XK_Tab,    view,           {0} }, */
 	/* { MODKEY|SFTKEY,             XK_c,      killclient,     {0} }, */
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
+	{ MODKEY|SFTKEY,                XK_t,      setlayout,      {.v = &layouts[1]} },
 	/* { MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} }, */
 	{ MODKEY,                       XK_f,      togglefullscr,  {0} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_s,      setlayout,      {.v = &layouts[3]} },
-	{ MODKEY,                       XK_g,      setlayout,      {.v = &layouts[4]} },
+	{ MODKEY,                       XK_s,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY|SFTKEY,                XK_s,      setlayout,      {.v = &layouts[3]} },
+	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[4]} },
+	{ MODKEY|SFTKEY,                XK_u,      setlayout,      {.v = &layouts[5]} },
+	{ MODKEY,                       XK_g,      setlayout,      {.v = &layouts[6]} },
+	{ MODKEY|SFTKEY,                XK_g,      setlayout,      {.v = &layouts[7]} },
+	{ MODKEY|SFTKEY,                XK_f,      setlayout,      {.v = &layouts[8]} },
 	/* { MODKEY,                       XK_space,  setlayout,      {0} }, */
 	/* { MODKEY|SFTKEY,             XK_space,  togglefloating, {0} }, */
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
