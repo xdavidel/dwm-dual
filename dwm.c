@@ -138,6 +138,7 @@ typedef struct Client Client;
 struct Client {
   char name[256];
   float mina, maxa;
+  float cfact;
   int x, y, w, h;
   int oldx, oldy, oldw, oldh;
   int basew, baseh, incw, inch, maxw, maxh, minw, minh;
@@ -227,6 +228,7 @@ static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
+static void getfacts(Monitor *m, float *mf, float *sf);
 static int getrootptr(int *x, int *y);
 static long getstate(Window w);
 static int gettextprop(Window w, Atom atom, char *text, unsigned int size);
@@ -259,6 +261,7 @@ static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
 static void setlayout(const Arg *arg);
+static void setcfact(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
@@ -923,12 +926,44 @@ Atom getatomprop(Client *c, Atom prop) {
   return atom;
 }
 
+void getfacts(Monitor *m, float *mf, float *sf) {
+  unsigned int n;
+  float mfacts = 0, sfacts = 0;
+  Client *c;
+
+  for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++) {
+    if (!m->nmaster || n < m->nmaster)
+      mfacts += c->cfact;
+    else
+      sfacts += c->cfact;
+  }
+  *mf = mfacts; // total factor of master area
+  *sf = sfacts; // total factor of slave area
+}
+
 int getrootptr(int *x, int *y) {
   int di;
   unsigned int dui;
   Window dummy;
 
   return XQueryPointer(dpy, root, &dummy, &dummy, x, y, &di, &di, &dui);
+}
+
+void setcfact(const Arg *arg) {
+  float f;
+  Client *c;
+
+  c = selmon->sel;
+
+  if (!arg || !c || !selmon->lt[selmon->sellt]->arrange)
+    return;
+  f = arg->f + c->cfact;
+  if (arg->f == 0.0)
+    f = 1.0;
+  else if (f < 0.25 || f > 4.0)
+    return;
+  c->cfact = f;
+  arrange(selmon);
 }
 
 long getstate(Window w) {
@@ -1099,6 +1134,7 @@ void manage(Window w, XWindowAttributes *wa) {
   c->w = c->oldw = wa->width;
   c->h = c->oldh = wa->height;
   c->oldbw = wa->border_width;
+  c->cfact = 1.0;
 
   updatetitle(c);
   if (XGetTransientForHint(dpy, w, &trans) && (t = wintoclient(trans))) {

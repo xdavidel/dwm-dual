@@ -66,8 +66,8 @@ static const Layout layouts[] = {
 	{ "H[]",	deck },			/* Master on left, slaves in monocle-like mode on right */
  	{ "[M]",	monocle },		/* All windows on top of eachother */
 
+	{ "HHH",	grid },		/* Master in middle, slaves on sides */
 	{ "|M|",	centeredmaster },		/* Master in middle, slaves on sides */
-	{ ">M>",	centeredfloatingmaster },	/* Same but master floats */
 
 	{ "><>",	NULL },			/* no layout function means floating behavior */
 	{ NULL,		NULL },
@@ -116,6 +116,10 @@ static Key keys[] = {
 	{ MODKEY|ALTKEY,                XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY|ALTKEY,                XK_Left,   setmfact,       {.f = -0.05} },
 	{ MODKEY|ALTKEY,                XK_Right,  setmfact,       {.f = +0.05} },
+	{ MODKEY|ALTKEY,                XK_k,      setcfact,       {.f = +0.20} },
+	{ MODKEY|ALTKEY,                XK_j,      setcfact,       {.f = -0.20} },
+	{ MODKEY|ALTKEY,                XK_Up,     setcfact,       {.f = +0.20} },
+	{ MODKEY|ALTKEY,                XK_Down,   setcfact,       {.f = -0.20} },
 	/* { MODKEY|Mod4Mask,              XK_h,      incrgaps,       {.i = +1 } }, */
 	/* { MODKEY|Mod4Mask,              XK_l,      incrgaps,       {.i = -1 } }, */
 	/* { MODKEY|Mod4Mask|ShiftMask,    XK_h,      incrogaps,      {.i = +1 } }, */
