@@ -46,3 +46,15 @@ Configuration
 -------------
 The configuration of dwm is done by creating a custom config.h
 and (re)compiling the source code.
+
+
+Patches
+------------
+actualfullscreen
+alpha
+autostart
+cfacts
+extrabar
+vanitygaps (with bstack, centeredmaster, deck, fibonacci, grid, tile)
+xrdb
+shiftview
