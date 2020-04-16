@@ -1,7 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
+static const unsigned int borderpx  = 3;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
@@ -78,6 +78,10 @@ static Key keys[] = {
 	{ MODKEY|ALTKEY,                XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY|ALTKEY,                XK_Left,   setmfact,       {.f = -0.05} },
 	{ MODKEY|ALTKEY,                XK_Right,  setmfact,       {.f = +0.05} },
+	{ MODKEY|ALTKEY,                XK_j,      setcfact,       {.f = +0.20} },
+	{ MODKEY|ALTKEY,                XK_k,      setcfact,       {.f = -0.20} },
+	{ MODKEY|ALTKEY,                XK_Down,   setcfact,       {.f = +0.20} },
+	{ MODKEY|ALTKEY,                XK_Up,     setcfact,       {.f = -0.20} },
 	/* { MODKEY,                       XK_Return, zoom,           {0} }, */
 	/* { MODKEY,                       XK_Tab,    view,           {0} }, */
 	/* { MODKEY|SFTKEY,             XK_c,      killclient,     {0} }, */
