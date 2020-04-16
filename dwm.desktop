@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=DWM
+Comment=dwm login
+Exec=dwm
+TryExec=dwm
+Type=Application
