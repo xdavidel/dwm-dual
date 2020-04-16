@@ -142,16 +142,16 @@ static Key keys[] = {
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY|SFTKEY,                XK_t,      setlayout,      {.v = &layouts[1]} },
 	/* { MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} }, */
-	{ MODKEY,                       XK_f,      togglefullscr,  {0} },
 	{ MODKEY,                       XK_s,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY|SFTKEY,                XK_s,      setlayout,      {.v = &layouts[3]} },
 	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[4]} },
 	{ MODKEY|SFTKEY,                XK_u,      setlayout,      {.v = &layouts[5]} },
 	{ MODKEY,                       XK_g,      setlayout,      {.v = &layouts[6]} },
 	{ MODKEY|SFTKEY,                XK_g,      setlayout,      {.v = &layouts[7]} },
-	{ MODKEY|SFTKEY,                XK_f,      setlayout,      {.v = &layouts[8]} },
+	{ MODKEY,                       XK_f,      togglefullscr,  {0} },
+	{ MODKEY|SFTKEY,                XK_f,      togglefloating, {0} },
+	/* { MODKEY|SFTKEY,                XK_f,      setlayout,      {.v = &layouts[8]} }, */
 	/* { MODKEY,                       XK_space,  setlayout,      {0} }, */
-	/* { MODKEY|SFTKEY,             XK_space,  togglefloating, {0} }, */
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|SFTKEY,                XK_0,      tag,            {.ui = ~0 } },
 	/* { MODKEY,                       XK_comma,  focusmon,       {.i = -1 } }, */
