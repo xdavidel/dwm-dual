@@ -88,6 +88,7 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 #include "shiftview.c"
+#include "movestack.c"
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
@@ -105,6 +106,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Up,     focusstack,     {.i = -1 } },
 	/* { MODKEY|SFTKEY,                XK_Down,   incnmaster,     {.i = +1 } }, */
 	/* { MODKEY|SFTKEY,                XK_Up,     incnmaster,     {.i = -1 } }, */
+	{ MODKEY|SFTKEY,                XK_Down,   movestack,      {.i = +1 } },
+	{ MODKEY|SFTKEY,                XK_Up,     movestack,      {.i = -1 } },
 	{ MODKEY|CTLKEY,                XK_Left,   shiftview,      {.i = -1 } },
 	{ MODKEY|CTLKEY,                XK_Right,  shiftview,      {.i = +1 } },
 	{ MODKEY|ALTKEY,                XK_h,      setmfact,       {.f = -0.05} },
