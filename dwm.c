@@ -96,6 +96,7 @@ enum {
   NetWMWindowType,
   NetWMWindowTypeDialog,
   NetClientList,
+  NetCloseWindow,
   NetLast
 }; /* EWMH atoms */
 enum {
@@ -560,6 +561,11 @@ void clientmessage(XEvent *e) {
 
   if (!c)
     return;
+  if (cme->message_type == netatom[NetCloseWindow]) {
+    Arg arg;
+    arg.v = (void *)c;
+    killclient(&arg);
+  }
   if (cme->message_type == netatom[NetWMState]) {
     if (cme->data.l[1] == netatom[NetWMFullscreen] ||
         cme->data.l[2] == netatom[NetWMFullscreen])
@@ -1018,13 +1024,19 @@ void keypress(XEvent *e) {
 }
 
 void killclient(const Arg *arg) {
-  if (!selmon->sel)
+  Client *c;
+  if (arg->v) {
+    c = (Client *)arg->v;
+  } else {
+    c = selmon->sel;
+  }
+  if (!c)
     return;
-  if (!sendevent(selmon->sel, wmatom[WMDelete])) {
+  if (!sendevent(c, wmatom[WMDelete])) {
     XGrabServer(dpy);
     XSetErrorHandler(xerrordummy);
     XSetCloseDownMode(dpy, DestroyAll);
-    XKillClient(dpy, selmon->sel->win);
+    XKillClient(dpy, c->win);
     XSync(dpy, False);
     XSetErrorHandler(xerror);
     XUngrabServer(dpy);
@@ -1594,6 +1606,7 @@ void setup(void) {
   netatom[NetWMWindowType] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
   netatom[NetWMWindowTypeDialog] =
       XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DIALOG", False);
+  netatom[NetCloseWindow] = XInternAtom(dpy, "_NET_CLOSE_WINDOW", False);
   netatom[NetClientList] = XInternAtom(dpy, "_NET_CLIENT_LIST", False);
   /* init cursors */
   cursor[CurNormal] = drw_cur_create(drw, XC_left_ptr);
