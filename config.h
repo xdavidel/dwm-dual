@@ -139,6 +139,8 @@ static Key keys[] = {
 	/* { MODKEY,                       XK_Return, zoom,           {0} }, */
 	/* { MODKEY,                       XK_Tab,    view,           {0} }, */
 	/* { MODKEY|SFTKEY,             XK_c,      killclient,     {0} }, */
+	{ MODKEY|CTLKEY,	        	XK_k,      cyclelayout,    {.i = -1 } },
+	{ MODKEY|CTLKEY,                XK_j,      cyclelayout,    {.i = +1 } },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY|SFTKEY,                XK_t,      setlayout,      {.v = &layouts[1]} },
 	/* { MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} }, */
@@ -174,8 +176,10 @@ static Key keys[] = {
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
-	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
-	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
+	{ ClkLtSymbol,          0,              Button1,        cyclelayout,    {.i = +1} },
+	{ ClkLtSymbol,          0,              Button3,        cyclelayout,    {.i = -1} },
+	{ ClkLtSymbol,          0,              Button4,        cyclelayout,    {.i = +1} },
+	{ ClkLtSymbol,          0,              Button5,        cyclelayout,    {.i = -1} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
