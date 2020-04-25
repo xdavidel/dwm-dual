@@ -275,6 +275,9 @@ static void sigterm(int unused);
 static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
+static void updatebarvisibility();
+static void hidebar();
+static void unhidebar();
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
 static void togglescratch(const Arg *arg);
@@ -1641,6 +1644,7 @@ void setfullscreen(Client *c, int fullscreen) {
     c->isfloating = 1;
     resizeclient(c, c->mon->mx, c->mon->my, c->mon->mw, c->mon->mh);
     XRaiseWindow(dpy, c->win);
+    hidebar();
   } else if (!fullscreen && c->isfullscreen) {
     XChangeProperty(dpy, c->win, netatom[NetWMState], XA_ATOM, 32,
                     PropModeReplace, (unsigned char *)0, 0);
@@ -1653,6 +1657,7 @@ void setfullscreen(Client *c, int fullscreen) {
     c->h = c->oldh;
     resizeclient(c, c->x, c->y, c->w, c->h);
     arrange(c->mon);
+    unhidebar();
   }
 }
 
@@ -1831,14 +1836,27 @@ void tagmon(const Arg *arg) {
   sendmon(selmon->sel, dirtomon(arg->i));
 }
 
-void togglebar(const Arg *arg) {
-  selmon->showbar = !selmon->showbar;
+void updatebarvisibility() {
   updatebarpos(selmon);
   XMoveResizeWindow(dpy, selmon->barwin, selmon->wx, selmon->by, selmon->ww,
                     bh);
   XMoveResizeWindow(dpy, selmon->extrabarwin, selmon->wx, selmon->eby,
                     selmon->ww, bh);
   arrange(selmon);
+}
+
+void hidebar() {
+  selmon->showbar = False;
+  updatebarvisibility();
+}
+
+void unhidebar() {
+  selmon->showbar = True;
+  updatebarvisibility();
+}
+void togglebar(const Arg *arg) {
+  selmon->showbar = !selmon->showbar;
+  updatebarvisibility();
 }
 
 void togglefloating(const Arg *arg) {
