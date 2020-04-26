@@ -1689,6 +1689,7 @@ void setfullscreen(Client *c, int fullscreen) {
     XRaiseWindow(dpy, c->win);
     hidebar(&a);
     hideotherwins(&a);
+    focus(c);
   } else if (!fullscreen && c->isfullscreen) {
     XChangeProperty(dpy, c->win, netatom[NetWMState], XA_ATOM, 32,
                     PropModeReplace, (unsigned char *)0, 0);
