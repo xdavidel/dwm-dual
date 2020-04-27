@@ -265,6 +265,7 @@ static void sendmon(Client *c, Monitor *m);
 static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
+static void setdistractions(Client *c, int distractions);
 static void setlayout(const Arg *arg);
 static void setcfact(const Arg *arg);
 static void setmfact(const Arg *arg);
@@ -612,6 +613,12 @@ void clientmessage(XEvent *e) {
   if (cme->message_type == netatom[NetCloseWindow]) {
     Arg arg;
     arg.v = (void *)c;
+
+    /* Handle closing a fullscreen client */
+    if (c->isfullscreen) {
+      setdistractions(c, 1);
+    }
+
     killclient(&arg);
   }
   if (cme->message_type == netatom[NetWMState]) {
@@ -1674,8 +1681,19 @@ void setfocus(Client *c) {
   sendevent(c, wmatom[WMTakeFocus]);
 }
 
-void setfullscreen(Client *c, int fullscreen) {
+void setdistractions(Client *c, int distractions) {
   Arg a = {0};
+  if (!distractions) {
+    hideotherwins(&a);
+    hidebar(&a);
+    focus(c);
+  } else {
+    unhidebar(&a);
+    restoreotherwins(&a);
+  }
+}
+
+void setfullscreen(Client *c, int fullscreen) {
   if (fullscreen && !c->isfullscreen) {
     XChangeProperty(dpy, c->win, netatom[NetWMState], XA_ATOM, 32,
                     PropModeReplace, (unsigned char *)&netatom[NetWMFullscreen],
@@ -1687,9 +1705,6 @@ void setfullscreen(Client *c, int fullscreen) {
     c->isfloating = 1;
     resizeclient(c, c->mon->mx, c->mon->my, c->mon->mw, c->mon->mh);
     XRaiseWindow(dpy, c->win);
-    hidebar(&a);
-    hideotherwins(&a);
-    focus(c);
   } else if (!fullscreen && c->isfullscreen) {
     XChangeProperty(dpy, c->win, netatom[NetWMState], XA_ATOM, 32,
                     PropModeReplace, (unsigned char *)0, 0);
@@ -1702,8 +1717,6 @@ void setfullscreen(Client *c, int fullscreen) {
     c->h = c->oldh;
     resizeclient(c, c->x, c->y, c->w, c->h);
     arrange(c->mon);
-    unhidebar(&a);
-    restoreotherwins(&a);
   }
 }
 
@@ -1927,8 +1940,10 @@ void togglefloating(const Arg *arg) {
 }
 
 void togglefullscr(const Arg *arg) {
-  if (selmon->sel)
+  if (selmon->sel) {
     setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
+    setdistractions(selmon->sel, !selmon->sel->isfullscreen);
+  }
 }
 
 void togglescratch(const Arg *arg) {
@@ -2114,6 +2129,9 @@ void unmanage(Client *c, int destroyed) {
     XSync(dpy, False);
     XSetErrorHandler(xerror);
     XUngrabServer(dpy);
+
+    /* Handle Withdrawn Event in case of fullscreen */
+    setfullscreen(c, 0);
   }
   free(c);
   focus(NULL);
